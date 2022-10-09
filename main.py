@@ -9,6 +9,14 @@ except:
 
 header = {"Authorization": "Bearer {}".format(BEARER_TOKEN)}
 
+def load_already_replied():
+    try:
+        with open("already_replied.txt", "r") as file:
+            already_replied = set(file.read().splitlines())
+    except:
+        already_replied = set()
+    return already_replied
+
 def get_mentions():
     url = "https://api.twitter.com/2/users/1578989916377096193/mentions"
     resp = requests.get(url, headers=header)
@@ -29,8 +37,6 @@ def reply(id):
 
     print(reply_string)
 
-
-
 def get_tweetfields(id, tweetfields="public_metrics"):
     url = "https://api.twitter.com/2/tweets?ids={}&tweet.fields={}".format(id, tweetfields)
     resp = requests.get(url, headers=header)
@@ -45,13 +51,14 @@ def get_parent_tweet(id):
 
 if __name__ == "__main__":
     mentions = get_mentions()
-    already_replied = set()
-    for id in mentions:
-        if id in already_replied:
-            continue
-        try:
-            reply(id)
-        except Exception as E:
-            print("Could not reply: ", E)
-        finally:
-            already_replied.add(id)
+    already_replied = load_already_replied()
+    with open('already_replied.txt', 'a') as file:
+        for id in mentions:
+            if id in already_replied:
+                continue
+            try:
+                reply(id)
+            except Exception as E:
+                print("Could not reply: ", E)
+            finally:
+                file.write(id + '\n')
