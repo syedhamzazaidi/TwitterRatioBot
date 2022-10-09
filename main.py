@@ -49,12 +49,13 @@ def get_parent_tweet(id):
     return get_tweetfields(id, "referenced_tweets")["data"][0]["referenced_tweets"][0]["id"]
 
 
-if __name__ == "__main__":
+def main():
     mentions = get_mentions()
     already_replied = load_already_replied()
     with open('already_replied.txt', 'a') as file:
         for id in mentions:
             if id in already_replied:
+                print(id, "Already replied. Skipping")
                 continue
             try:
                 reply(id)
