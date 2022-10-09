@@ -1,5 +1,4 @@
 import requests
-import os
 from credentials import *
 
 try:
@@ -8,10 +7,33 @@ except:
     print("BEARER_TOKEN missing from credentials. Add credentials and try again")
     exit(1)
 
+header = {"Authorization": "Bearer {}".format(BEARER_TOKEN)}
+
+def get_mentions():
+    url = "https://api.twitter.com/2/users/1578989916377096193/mentions"
+    resp = requests.get(url, headers=header)
+    return reversed([data['id'] for data in resp.json()['data']])
+
+def reply(id):
+    parent_id = get_parent_tweet(id)
+    parent_like_count = get_likes(parent_id)
+    grandparent_id = get_parent_tweet(parent_id)
+    grandparent_like_count = get_likes(grandparent_id)
+
+    ratio = grandparent_like_count / parent_like_count
+
+    if ratio > 1:
+        reply_string = f"Damn son that's a ratio of {ratio} ! 🔥"
+    else:
+        reply_string = f"Eh, ratio's just {ratio}. Do better next time."
+
+    print(reply_string)
+
+
 
 def get_tweetfields(id, tweetfields="public_metrics"):
     url = "https://api.twitter.com/2/tweets?ids={}&tweet.fields={}".format(id, tweetfields)
-    resp = requests.get(url, headers={"Authorization": "Bearer {}".format(BEARER_TOKEN)})
+    resp = requests.get(url, headers=header)
     return resp.json()
 
 def get_likes(id):
@@ -22,9 +44,14 @@ def get_parent_tweet(id):
 
 
 if __name__ == "__main__":
-    id = '1480713640772730880'
-    id = id if id else input()
-
-    son_like = get_likes(id)
-    parent_like = get_likes(get_parent_tweet(id))
-    print("ratio = ", son_like/parent_like, "boom son")
+    mentions = get_mentions()
+    already_replied = set()
+    for id in mentions:
+        if id in already_replied:
+            continue
+        try:
+            reply(id)
+        except Exception as E:
+            print("Could not reply: ", E)
+        finally:
+            already_replied.add(id)
