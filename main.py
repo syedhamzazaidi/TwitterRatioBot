@@ -1,10 +1,11 @@
 import requests
 import os
+from credentials import *
 
 try:
-    BEARER_TOKEN = os.environ['BEARER_TOKEN']
+    BEARER_TOKEN
 except:
-    print("BEARER_TOKEN missing from environment. Export and try again")
+    print("BEARER_TOKEN missing from credentials. Add credentials and try again")
     exit(1)
 
 
