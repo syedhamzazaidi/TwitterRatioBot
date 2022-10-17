@@ -40,14 +40,17 @@ class Twitter():
     def get_parent_tweet(self, id):
         return self.get_tweetfields(id, "referenced_tweets")["data"][0]["referenced_tweets"][0]["id"]
 
-    def post_tweet(self):
+    def post_reply_tweet(self, text, parent_id):
         uri = "tweets"
-        header1 = {
+        header = {
             "Content-type": "application/json",
             "Authorization": f"OAuth {self.access_token}"
             }
-        payload = {"text": "Hi, this is another test tweet!"}
-        resp = requests.post(self.url+uri, headers=header1, params=payload)
+        payload = {
+            "text": f"{text}",
+            "in_reply_to_tweet_id": parent_id,
+        }
+        resp = requests.post(self.url+uri, headers=header, params=payload)
         print(resp.text)
         return resp.json()
 
