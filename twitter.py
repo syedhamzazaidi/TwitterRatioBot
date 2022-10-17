@@ -56,7 +56,7 @@ class Twitter():
 
     def get_tweetfields(self, id, tweetfields="public_metrics"):
         uri = "tweets?ids={}&tweet.fields={}".format(id, tweetfields)
-        resp = requests.get(self.url+uri, headeurlrs=self.header)
+        resp = requests.get(self.url+uri, headers=self.header)
         return resp.json()
 
 if __name__ == '__main__':
