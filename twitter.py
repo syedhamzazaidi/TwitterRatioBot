@@ -51,6 +51,7 @@ class Twitter():
             "in_reply_to_tweet_id": parent_id,
         }
         resp = requests.post(self.url+uri, headers=header, params=payload)
+        self.refresh_token()
         print(resp.text)
         return resp.json()
 
