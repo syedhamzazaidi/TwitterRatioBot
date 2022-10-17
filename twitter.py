@@ -6,13 +6,13 @@ class Twitter():
     def __init__(self):
         self.url = "https://api.twitter.com/2/"
         try:
-            BEARER_TOKEN = os.environ['BEARER_TOKEN']
+            self.BEARER_TOKEN = os.environ['BEARER_TOKEN']
             self.CLIENT_ID = os.environ['CLIENT_ID']
             self.refreshed_token = os.environ['TOKEN']
         except:
             print("Initial credentials missing. Add credentials to environment and try again")
             exit(1)
-        self.header = {"Authorization": "Bearer {}".format(BEARER_TOKEN)}
+        self.header = {"Authorization": "Bearer {}".format(self.BEARER_TOKEN)}
         self.refresh_token()
 
     def refresh_token(self):
@@ -53,7 +53,7 @@ class Twitter():
 
     def get_tweetfields(self, id, tweetfields="public_metrics"):
         uri = "tweets?ids={}&tweet.fields={}".format(id, tweetfields)
-        resp = requests.get(self.url+uri, headeurlrs=self.headers)
+        resp = requests.get(self.url+uri, headeurlrs=self.header)
         return resp.json()
 
 if __name__ == '__main__':
