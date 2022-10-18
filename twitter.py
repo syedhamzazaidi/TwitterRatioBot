@@ -44,7 +44,7 @@ class Twitter():
         uri = "tweets"
         header = {
             "Content-type": "application/json",
-            "Authorization": f"OAuth {self.access_token}"
+            "Authorization": f"Bearer {self.access_token}"
             }
         payload = {
             "text": f"{text}",
