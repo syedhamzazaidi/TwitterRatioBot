@@ -40,6 +40,7 @@ class Twitter():
         return self.get_tweetfields(id, "referenced_tweets")["data"][0]["referenced_tweets"][0]["id"]
 
     def post_reply_tweet(self, text, parent_id):
+        self.refresh_token()
         uri = "tweets"
         headers = {'Authorization': f'Bearer {self.access_token}'}
         json_data = {
@@ -49,7 +50,6 @@ class Twitter():
             }
         }
         resp = requests.post(self.url+uri, headers=headers, json=json_data)
-        self.refresh_token()
         return resp.json()
 
     def get_tweetfields(self, id, tweetfields="public_metrics"):
