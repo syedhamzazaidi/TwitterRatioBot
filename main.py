@@ -14,7 +14,7 @@ def reply(tweety, id):
     grandparent_id = tweety.get_parent_tweet(parent_id)
     grandparent_like_count = tweety.get_likes(grandparent_id)
 
-    ratio = grandparent_like_count / parent_like_count
+    ratio = parent_like_count / grandparent_like_count
 
     if ratio > 1:
         reply_string = f"Damn son that's a ratio of {ratio} ! 🔥"
