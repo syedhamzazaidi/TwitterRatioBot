@@ -21,7 +21,7 @@ def reply(tweety, id):
     else:
         reply_string = f"Eh, ratio's just {ratio}. Do better next time."
 
-    tweety.post_reply_tweet(reply_string, parent_id)
+    tweety.post_reply_tweet(reply_string, id)
     print(reply_string)
 
 def main():
