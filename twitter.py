@@ -24,7 +24,6 @@ class Twitter():
             "client_id": f"{self.CLIENT_ID}"
         }
         resp = requests.post(self.url+uri, headers=headers, data=payload).json()
-        print("refresh\n", resp)
         self.access_token = resp['access_token']
         self.refreshed_token = os.environ['TOKEN'] = resp['refresh_token']
         return resp
@@ -42,19 +41,21 @@ class Twitter():
 
     def post_reply_tweet(self, text, parent_id):
         uri = "tweets"
-        header = {
-            "Content-type": "application/json",
-            "Authorization": f"Bearer {self.access_token}"
-            }
-        payload = {
-            "text": f"{text}",
-            "reply": {
-                "in_reply_to_tweet_id": parent_id
-            }
+        headers = {
+            # Already added when you pass json= but not when you pass data=
+            # 'Content-type': 'application/json',
+            'Authorization': f'Bearer {self.access_token}',
         }
-        resp = requests.post(self.url+uri, headers=header, params=payload)
+
+        json_data = {
+            'text': f'{text}',
+            'reply': {
+                'in_reply_to_tweet_id': f'{parent_id}',
+            },
+        }
+
+        resp = requests.post(self.url+uri, headers=headers, json=json_data)
         self.refresh_token()
-        print(resp.text)
         return resp.json()
 
     def get_tweetfields(self, id, tweetfields="public_metrics"):
