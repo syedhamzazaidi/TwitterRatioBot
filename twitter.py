@@ -41,19 +41,13 @@ class Twitter():
 
     def post_reply_tweet(self, text, parent_id):
         uri = "tweets"
-        headers = {
-            # Already added when you pass json= but not when you pass data=
-            # 'Content-type': 'application/json',
-            'Authorization': f'Bearer {self.access_token}',
-        }
-
+        headers = {'Authorization': f'Bearer {self.access_token}'}
         json_data = {
             'text': f'{text}',
             'reply': {
                 'in_reply_to_tweet_id': f'{parent_id}',
-            },
+            }
         }
-
         resp = requests.post(self.url+uri, headers=headers, json=json_data)
         self.refresh_token()
         return resp.json()
