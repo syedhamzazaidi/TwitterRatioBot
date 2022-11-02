@@ -24,8 +24,8 @@ def reply(tweety, id):
     tweety.post_reply_tweet(reply_string, id)
     print(reply_string)
 
-def main():
-    tweety = Twitter()
+def main(code=None):
+    tweety = Twitter(code)
     mentions = tweety.get_mentions()
     already_replied = load_already_replied()
     with open('already_replied.txt', 'a') as file:

@@ -3,9 +3,20 @@ import requests
 
 class Twitter():
 
-    def __init__(self):
+    def __init__(self, code=None):
         self.url = "https://api.twitter.com/2/"
         try:
+            if code:
+                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                data = {
+                    "code": code,
+                    "grant_type": "authorization_code",
+                    "client_id": os.environ['CLIENT_ID'],
+                    "redirect_uri": os.environ['REDIRECT_URI'],
+                    "code_verifier": "challenge"
+                }
+                response = requests.post(self.url + 'oauth2/token', headers=headers, data=data)
+                os.environ['TOKEN'] = response.json()['refresh_token']
             self.BEARER_TOKEN = os.environ['BEARER_TOKEN']
             self.CLIENT_ID = os.environ['CLIENT_ID']
             self.refreshed_token = os.environ['TOKEN']
