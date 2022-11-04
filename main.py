@@ -1,13 +1,5 @@
 from twitter import Twitter
 
-def load_already_replied():
-    try:
-        with open("already_replied.txt", "r") as file:
-            already_replied = set(file.read().splitlines())
-    except:
-        already_replied = set()
-    return already_replied
-
 def reply(tweety, id):
     parent_id = tweety.get_parent_tweet(id)
     parent_like_count = tweety.get_likes(parent_id)
@@ -27,18 +19,14 @@ def reply(tweety, id):
 def main(code=None):
     tweety = Twitter(code)
     mentions = tweety.get_mentions()
-    already_replied = load_already_replied()
-    with open('already_replied.txt', 'a') as file:
-        for id in mentions:
-            if id in already_replied:
-                print(id, "Already replied. Skipping")
-                continue
-            try:
-                reply(tweety, id)
-            except Exception as E:
-                print("Could not reply: ", E)
-            finally:
-                file.write(id + '\n')
+    for id in mentions:
+        if tweety.already_replied(id):
+            print(id, "Already replied. Skipping all")
+            break
+        try:
+            reply(tweety, id)
+        except Exception as E:
+            print("Could not reply: ", E)
 
 if __name__ == '__main__':
     main()

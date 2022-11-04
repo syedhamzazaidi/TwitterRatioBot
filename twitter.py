@@ -42,13 +42,26 @@ class Twitter():
     def get_mentions(self):
         uri = "users/1578989916377096193/mentions"
         resp = requests.get(self.url+uri, headers=self.header)
-        return reversed([data['id'] for data in resp.json()['data']])
+        return [data['id'] for data in resp.json()['data']]
 
     def get_likes(self, id):
         return self.get_tweetfields(id, "public_metrics")["data"][0]["public_metrics"]["like_count"]
 
     def get_parent_tweet(self, id):
         return self.get_tweetfields(id, "referenced_tweets")["data"][0]["referenced_tweets"][0]["id"]
+
+    def already_replied(self, id):
+        uri = "tweets/search/recent"
+        headers = {'Authorization': f'Bearer {self.access_token}'}
+        json_data = {
+            'query': f'in_reply_to_tweet_id:{id} from:1578989916377096193'
+        }
+        resp = requests.get(self.url+uri, headers=headers, data=json_data)
+        try:
+            return resp.json()['meta']['result_count']
+        except:
+            print("Could not check if tweet {} has already been replied to. Something's wrong")
+            exit(1)
 
     def post_reply_tweet(self, text, parent_id):
         self.refresh_token()
