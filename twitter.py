@@ -1,5 +1,6 @@
 import os
 import requests
+from datetime import datetime, timedelta
 
 class Twitter():
 
@@ -41,8 +42,12 @@ class Twitter():
 
     def get_mentions(self):
         uri = "users/1578989916377096193/mentions"
-        resp = requests.get(self.url+uri, headers=self.header)
-        return [data['id'] for data in resp.json()['data']]
+        yesterday = datetime.now() - timedelta(days=1)
+        json_data = {
+            "start_time": yesterday.strftime('%Y-%m-%dT%H:%M:%SZ')
+        }
+        resp = requests.get(self.url+uri, headers=self.header, data=json_data).json()
+        return [data['id'] for data in resp.get('data', [])]
 
     def get_likes(self, id):
         return self.get_tweetfields(id, "public_metrics")["data"][0]["public_metrics"]["like_count"]
@@ -54,14 +59,14 @@ class Twitter():
         uri = "tweets/search/recent"
         headers = {'Authorization': f'Bearer {self.access_token}'}
         json_data = {
-            'query': f'in_reply_to_tweet_id:{id} from:1578989916377096193'
+            'query': f'in_reply_to_tweet_id:{id} from:YoWhatsTheRatio'
         }
         resp = requests.get(self.url+uri, headers=headers, data=json_data)
         try:
-            return resp.json()['meta']['result_count']
+           return resp.json()['meta']['result_count']
         except:
             print("Could not check if tweet {} has already been replied to. Something's wrong")
-            exit(1)
+            return True
 
     def post_reply_tweet(self, text, parent_id):
         self.refresh_token()
