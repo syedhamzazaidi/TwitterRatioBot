@@ -1,5 +1,6 @@
 import os
 import requests
+import re
 from datetime import datetime, timedelta
 
 class Twitter():
@@ -47,7 +48,13 @@ class Twitter():
             "start_time": yesterday.strftime('%Y-%m-%dT%H:%M:%SZ')
         }
         resp = requests.get(self.url+uri, headers=self.header, data=json_data).json()
-        return [data['id'] for data in resp.get('data', [])]
+        mentions = []
+        for data in resp.get('data', []):
+            print(data['text'])
+            matches = re.findall('@\w+', data['text'].lower())
+            if matches and matches[-1] == '@yowhatstheratio':
+                mentions.append(data['id'])
+        return mentions
 
     def get_likes(self, id):
         return self.get_tweetfields(id, "public_metrics")["data"][0]["public_metrics"]["like_count"]
