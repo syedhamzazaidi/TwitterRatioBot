@@ -11,8 +11,13 @@ def reply(tweety, giphy, id):
     grandparent_id = tweety.get_parent_tweet(parent_id)
     grandparent_like_count = tweety.get_likes(grandparent_id)
 
+    if grandparent_like_count == 0:
+        ratio = 'infinity'
     ratio = parent_like_count / grandparent_like_count
 
+    if ratio == 'infinity':
+        reply_string = f"Ratio is {ratio}. Absolutely. Royally. Owned. Go rethink your entire life. You don't even get a gif"
+        gif_url = ''
     if ratio > 1:
         reply_string = f"Damn son that's a ratio of {ratio} ! 🔥"
         gif_url = giphy.gif(random.choice(burn_gif_prompts))
